@@ -100,6 +100,7 @@ public class BattleSystem : MonoBehaviour
         if(isDead)
         {
             state = BattleState.LOST;
+            yield return new WaitForSeconds(2.0f);
             playerUnit.GetComponent<SpriteRenderer>().enabled = false;
             EndBattle();
         }
