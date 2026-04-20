@@ -26,12 +26,16 @@ public class BattleSystem : MonoBehaviour
 
     public bool TakeDamage;
 
+    public bool SetActive;
+
+
     //Start is called before the first frame update
     void Start()
     {
         state = BattleState.START;
         StartCoroutine(SetupBattle());
     }
+
 
     //Instatiate is another term for spawn
     //PlayerGo = Player GameObject; EnemyGo = Enemy GameObject 
@@ -62,20 +66,21 @@ public class BattleSystem : MonoBehaviour
         enemyHealth.SetHP(enemyUnit.currentHP);
 
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
 
         //Check if the enemy is dead
         if(isDead)
         {
             state = BattleState.WON;  //End the battle 
             enemyHealth.SetHP(enemyUnit.currentHP = 0);
+            enemyUnit.GetComponent<SpriteRenderer>().enabled = false;
             EndBattle(); 
         } else
         {
             state = BattleState.ENEMYTURN;  //Enemy turn
             enemyHealth.SetHP(enemyUnit.currentHP);
 
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.5f);
             StartCoroutine(EnemyTurn());
         }
         //Change state based on what happens 
@@ -84,19 +89,21 @@ public class BattleSystem : MonoBehaviour
     IEnumerator EnemyTurn()
     {
 
-        yield return new WaitForSeconds(1.0f); 
+        yield return new WaitForSeconds(0.5f); 
         
         bool isDead = playerUnit.TakeDamage(enemyUnit.damage);
 
         playerHealth.SetHP(playerUnit.currentHP);
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
 
         if(isDead)
         {
             state = BattleState.LOST;
+            playerUnit.GetComponent<SpriteRenderer>().enabled = false;
             EndBattle();
-        }else
+        }
+        else
         {
             state = BattleState.PLAYERTURN;
             PlayerTurn();
@@ -109,9 +116,12 @@ public class BattleSystem : MonoBehaviour
         if(state == BattleState.WON)
         {
             print ("You won the battle");
-        }else if(state == BattleState.LOST)
+        }
+        else if(state == BattleState.LOST)
         {
             print("You were defeated");
+            
+            GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 
@@ -127,7 +137,7 @@ public class BattleSystem : MonoBehaviour
         playerHealth.SetHP(playerUnit.currentHP);
         print("You feel renewed strength");
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
 
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
@@ -140,7 +150,7 @@ public class BattleSystem : MonoBehaviour
         playerUnit.Cook(10);
         enemyHealth.SetHP(enemyUnit.currentHP);
 
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
 
         state = BattleState.ENEMYTURN;
         StartCoroutine(EnemyTurn());
